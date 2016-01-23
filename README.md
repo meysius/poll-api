@@ -1,28 +1,40 @@
 ## Definitions
 
-**Homebrew** is for downloading and installing open source apps on mac. It is an open source package manager. 
-
-**RVM** and **rbenv** are version managers for ruby. They make it possible for you to have projects which work with different versions of ruby. 
-
-**RubyGems** is a package manager for installing plugins and libraries for use with ruby rails. 
-
-A **RubyGem** or **Gem** is a ruby code packed for easy distribution. RubyGems.org is a public gem repository.
-
-**Rails** is a gem which manages.
-
-**Bundler** is a gem that helps your rails app to load the right ruby gems.
-
-**Rake** is a gem which will make tasks.
+* **Homebrew** is for downloading and installing open source apps on mac. It is an open source package manager. 
+* **RVM** and **rbenv** are version managers for ruby. They make it possible for you to have projects which work with different versions of ruby. 
+* **RubyGems** is a package manager for installing plugins and libraries for use with ruby rails. 
+* A **RubyGem** or **Gem** is a ruby code packed for easy distribution. RubyGems.org is a public gem repository.
+* **Rails** is a gem which manages.
+* **Bundler** is a gem that helps your rails app to load the right ruby gems.
+* **Rake** is a gem which will make tasks.
 
 
 ## Setting Things up
 
-### Environment 
-install homebrew install rbenv via homebrew install ruby-build via homebrew put command eval “$(rbenv init -)” in ~/.bash_profile install latest version of ruby: find the latest version on ruby-lang.org and install it via this command: rbenv install 2.2.3 enter this command: rbenv rehash change global ruby version by this command: rbenv global 2.2.3 gem list gives the current locally installed gems, to update all gems do: gem update –system install bundler gem: gem install bundler and then: rbenv rehash install rails gem: gem install rails –no-ri –no-rdoc (these options forces gem not to download documentations which can take a lot of space) and then: rbenv rehash MYSQL brew install mysql at the end it will give you a command that make mysql launch at startup. you can always manually do: msyql.server start/stop/status login to mysql: mysql -u <user> -p set password for root: mysqladmin -u <user> password then it will ask you to enter password for this user. to make rails able to talk to mysql you need mysql2 gem: gem install mysql2
+#### Environment 
+* install homebrew
+* install rbenv via homebrew
+* install ruby-build via homebrew
+* put command eval “$(rbenv init -)” in ~/.bash_profile
+* install latest version of ruby: find the latest version on ruby-lang.org and install it via this command: ```rbenv install 2.2.3``` 
+* enter this command: ```rbenv rehash```
+* change global ruby version by this command: ```rbenv global 2.2.3```
+* ```gem list``` gives the current locally installed gems, to update all gems do: ```gem update –system```
+* install bundler gem: ```gem install bundler``` and then: ```rbenv rehash```
+* install rails gem: ```gem install rails –no-ri –no-rdoc``` (these options forces gem not to download documentations which can take a lot of space) and then: ```rbenv rehash```
 
-SUBLIME (for mac users) to make sublime open with subl command in terminal enter this command: ln -s /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/
+#### MySQL
+* ```brew install mysql``` at the end it will give you a command that make mysql launch at startup. 
+* you can always manually do: ```msyql.server start/stop/status```
+* login to mysql: ```mysql -u <user> -p```
+* set password for root: ```mysqladmin -u <user> password``` then it will ask you to enter password for this user. 
+* to make rails able to talk to mysql you need mysql2 gem: gem install mysql2
 
-Let us begin… Create New Project navigate to the directory you want to create the project inside it. Create a new rails web application: rails new <name> [-d mysql] Create a new rails api: rails-api new <name> [-d mysql] (rails-api is a gem, install it if you don’t already have it)
+#### SUBLIME
+* (for mac users) to make sublime open with subl command in terminal enter this command: ```ln -s /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/```
+
+#### Let us begin…
+Create New Project navigate to the directory you want to create the project inside it. Create a new rails web application: rails new <name> [-d mysql] Create a new rails api: rails-api new <name> [-d mysql] (rails-api is a gem, install it if you don’t already have it)
 
 Bundler Bundler works with two files within our project: Gemfile and Gemfile.lock. Gemfile is for us to edit. Put whatever gem name your app would need and then for updating all gems navigate to the root of your app and do: bundle install if at some point some command did not work for your project you need to put bundle exec at front of it so that the command is executed in the context of the specific bundle of gems the project has.
 
