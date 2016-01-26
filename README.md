@@ -633,7 +633,7 @@ Below is the standard list of RESTful routes:
 You can find routing configuration file in: ```config/routes.rb```
 
 #### 17. Building a RESTful Rails API
-First, you need to set permission for ajax calls from other domains. You need to get this [gem](github.com/cyu/rack-cors) installed: 
+First, you need to set permission for ajax calls from other domains. You need to get this [gem](http://github.com/cyu/rack-cors) installed: 
 
 ```sh
 $ gem install rack-cors
@@ -660,7 +660,7 @@ end
 ```
 
 Then you need to add routes for your RESTful api:
-Read [this blog](blog.ragnarson.com/2013/10/01/how-to-integrate-angularjs-with-rails-4.html) 
+Read [this blog](http://blog.ragnarson.com/2013/10/01/how-to-integrate-angularjs-with-rails-4.html) 
 
 ```ruby
 namespace :api, :defaults => {:format => :json} do
