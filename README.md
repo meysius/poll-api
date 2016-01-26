@@ -717,7 +717,7 @@ Then to check whether or not a user can be authenticated with a given password, 
 
 If the authentication is successful, you need to mark the user as authenticated. You can do this by putting the logged in status in user's session.
 
-If your application is only a rails api, you need to generate a Json Web Token instead of cookie session and send it back to user. To create this token, follow the instructions [here](github.com/jwt/ruby-jwt).
+If your application is only a rails api, you need to generate a Json Web Token instead of cookie session and send it back to user. To create this token, follow the instructions [here](https://github.com/jwt/ruby-jwt).
 
 To check if user has logged in when they request for an action, first, add this method to ApplicationController:
 
