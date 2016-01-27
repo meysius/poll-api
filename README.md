@@ -1,8 +1,7 @@
 # poll-api
 This repository contains a **complete RESTful Rails-api** along with a clean documentation which walks developers through all construction steps. If you wish to start with ruby on rails, this repository is a great resource for you.
 
-### AngularJS Front-End Repository
-An AngularJS reposity with a similiar step by step documentation that talks with this Rails-api is found [here](https://github.com/mefeghhi/poll-web).
+### [AngularJS Front-End Repository](https://github.com/mefeghhi/poll-web)
 
 # Ruby on Rails Cheat Sheet
 
