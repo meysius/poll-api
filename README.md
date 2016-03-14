@@ -41,22 +41,7 @@ This repository contains a **complete RESTful Rails-api** along with a clean doc
 * (for mac users) to make sublime open with subl command in terminal enter this command: ```ln -s /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/```
 
 ## Let us begin…
-#### 1. Bundler
-Bundler is used to install ruby gems for our rails application. To install a gem, add its name to the ```Gemfile```, like:
-
-```ruby
-gem 'bcrypt'
-```
-
-Now, navigating to the root of your app and do:
-
-```sh
-$ bundle install
-```
-
-If at some point some command did not work for your project you need to put ```bundle exec``` at front of it so that the command is executed in the context of the specific bundle of gems your project has.
-
-#### 2. Create New Project
+#### 1. Create New Project
 Navigate to the directory you want to create the project inside it. 
 Create a new rails web application:
 
@@ -72,6 +57,20 @@ $ rails-api new <name> [-d mysql]
 
 (rails-api is a gem, install it if you don’t already have it)
 
+#### 2. Bundler
+Bundler is used to install ruby gems for our rails application. To install a gem, add its name to the ```Gemfile```, like:
+
+```ruby
+gem 'bcrypt'
+```
+
+Now, navigating to the root of your app and do:
+
+```sh
+$ bundle install
+```
+
+If at some point some command did not work for your project you need to put ```bundle exec``` at front of it so that the command is executed in the context of the specific bundle of gems your project has.
 
 #### 3. Database Setup
 ```sql
