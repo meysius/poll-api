@@ -366,7 +366,8 @@ Then you can do things like:
 course.projects
 course.projects << p
 course.projects = [p1, p2, p3]
-course.projects.destroy(p1) # destroys completely course.projects.delete(p1) # deletes from the list of projects
+course.projects.destroy(p1) # destroys completely 
+course.projects.delete(p1) # deletes from the list of projects
 course.projects.clear
 course.projects.empty?
 course.projects.size
