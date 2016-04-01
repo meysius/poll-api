@@ -28,7 +28,7 @@ This repository contains a **complete RESTful Rails-api** along with a clean doc
 * change global ruby version by this command: ```rbenv global 2.2.3```
 * ```gem list``` gives the current locally installed gems, to update all gems do: ```gem update --system```
 * install bundler gem: ```gem install bundler``` and then: ```rbenv rehash```
-* install rails gem: ```gem install rails –no-ri –no-rdoc``` (these options forces gem not to download documentations which can take a lot of space) and then: ```rbenv rehash```
+* install rails gem: ```gem install rails --no-ri --no-rdoc``` (these options forces gem not to download documentations which can take a lot of space) and then: ```rbenv rehash```
 
 #### MySQL
 * ```brew install mysql``` at the end it will give you a command that make mysql launch at startup. 
