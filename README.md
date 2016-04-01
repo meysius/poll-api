@@ -16,13 +16,14 @@ This repository contains a **complete RESTful Rails-api** along with a clean doc
 * **Rake** is a gem which will make tasks.
 
 
-## Setting Things up
+## Setting Things up (Mac)
+* for installation steps on ubuntu visit [here](https://gorails.com/setup/ubuntu/14.04)
 
 #### Environment 
 * install homebrew
 * install rbenv via homebrew
 * install ruby-build via homebrew
-* put command eval “$(rbenv init -)” in ~/.bash_profile
+* put command ```eval "$(rbenv init -)"``` in ~/.bash_profile
 * install latest version of ruby: find the latest version on ruby-lang.org and install it via this command: ```rbenv install 2.2.3``` 
 * enter this command: ```rbenv rehash```
 * change global ruby version by this command: ```rbenv global 2.2.3```
