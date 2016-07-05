@@ -248,11 +248,11 @@ Available types are:
 
 Available options:
 
-* ```ruby :limit => size```
-* ```ruby :default => value```
-* ```ruby :null => true/false```
-* ```ruby :precision => number``` (for decimal type only)
-* ```ruby :scale => number``` (for decimal type only)
+* ``` :limit => size```
+* ``` :default => value```
+* ``` :null => true/false```
+* ``` :precision => number``` (for decimal type only)
+* ``` :scale => number``` (for decimal type only)
 
 In down method u can do:
 
