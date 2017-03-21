@@ -37,6 +37,10 @@ This repository contains a **complete RESTful Rails-api** along with a clean doc
 * set password for root: ```mysqladmin -u <user> password``` then it will ask you to enter password for this user. 
 * to make rails able to talk to mysql you need mysql2 gem: gem install mysql2
 
+#### MongoDB
+
+* https://www.youtube.com/watch?v=L0RqU2MdqXU
+* https://docs.mongodb.com/ruby-driver/master/tutorials/6.1.0/mongoid-documents/
 #### Sublime
 * (for mac users) to make sublime open with subl command in terminal enter this command: ```ln -s /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/```
 
