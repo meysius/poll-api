@@ -320,7 +320,7 @@ Presistable models (entities) must inherit from ```ActiveRecord``` class.
 We do not need to define attributes in our models. By default, rails create methods for accessing the model's attributes based on the model's migration file.
 
 ##### 12.2 One-to-one Association
-[Complete association reference] (guides.rubyonrails.org/association_basics.html)
+[Complete association reference](http://guides.rubyonrails.org/association_basics.html)
 
 On the model class of the owner side (Student):
 
