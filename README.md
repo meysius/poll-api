@@ -429,9 +429,8 @@ Generate models for the base class and all of its subclasses. Then, put the foll
 
 ```ruby
 ...
-	t.references(:<super_ + name of superclass>, :polymorphic => true)
+	t.references :<super_ + name of superclass>, :polymorphic => true, index: {:name => "some_name"}
 ...
-add_index(:<name of table>, ['<super_ + name of superclass>_id', '<super_ + name of superclass>_type'], {:name => 'a name'})
 ```
 
 This makes an ```id``` and a ```type``` column in the table of the base class.
