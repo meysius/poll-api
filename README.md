@@ -425,7 +425,7 @@ end
 Again, If you perform any modification on objects in either side of such relationship, rails will instantly sync the database accordingly.
 
 ##### 12.5 Polymorphic Association
-Generate models for the base class and all of its subclasses. Then, put the following lines in the migration file for the super class:
+Generate models for the base class and all of its subclasses. Do not forget to make subclasses inherit from the base class. Then, put the following lines in the migration file for the super class:
 
 ```ruby
 ...
