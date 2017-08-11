@@ -429,7 +429,7 @@ Generate models for the base class and all of its subclasses. Do not forget to m
 
 ```ruby
 ...
-	t.references :<super_ + name of superclass>, :polymorphic => true, index: {:name => "some_name"}
+	t.references :<sub_ + name of superclass>, :polymorphic => true, index: {:name => "some_name"}
 ...
 ```
 
@@ -438,17 +438,17 @@ This makes an ```id``` and a ```type``` column in the table of the base class.
 In the model for superclass add:
 
 ```ruby
-belongs_to(:<super_ + name of superclass>, :polymorphic => true)
+belongs_to(:<sub_ + name of superclass>, :polymorphic => true)
 ```
 In the models for subclasses add: 
 
 ```ruby
-has_one(:<name of superclass>, :as => :<super_ + name of superclass>)
+has_one(:<name of superclass>, :as => :<sub_ + name of superclass>)
 ```
 or 
 
 ```ruby
-has_many(:<name of superclass>s, :as => :<super_ + name of superclass>)
+has_many(:<name of superclass>s, :as => :<sub_ + name of superclass>)
 ```
 
 ##### 12.6 Creating and saving model objects
