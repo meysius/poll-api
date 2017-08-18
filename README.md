@@ -424,32 +424,11 @@ end
 ```
 Again, If you perform any modification on objects in either side of such relationship, rails will instantly sync the database accordingly.
 
-##### 12.5 Polymorphic Association
-Generate models for the base class and all of its subclasses. Do not forget to make subclasses inherit from the base class. Then, put the following lines in the migration file for the super class:
+##### 12.5 Inheritance
+Two main types of class inheritance:
+- Single Table Inheritance
+- Class Table Inheritance (https://github.com/mvdamme/dbview_cti)
 
-```ruby
-...
-	t.references :<sub_ + name of superclass>, :polymorphic => true, index: {:name => "some_name"}
-...
-```
-
-This makes an ```id``` and a ```type``` column in the table of the base class.
-
-In the model for superclass add:
-
-```ruby
-belongs_to(:<sub_ + name of superclass>, :polymorphic => true)
-```
-In the models for subclasses add: 
-
-```ruby
-has_one(:<name of superclass>, :as => :<sub_ + name of superclass>)
-```
-or 
-
-```ruby
-has_many(:<name of superclass>s, :as => :<sub_ + name of superclass>)
-```
 
 ##### 12.6 Creating and saving model objects
 
