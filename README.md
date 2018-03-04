@@ -8,67 +8,48 @@ This repository contains a **complete RESTful Rails-api** along with a clean doc
 ## Definitions
 
 * **Homebrew** is for downloading and installing open source apps on mac. It is an open source package manager. 
-* **RVM** and **rbenv** are version managers for ruby. They make it possible for you to have projects which work with different versions of ruby. 
+* **RVM** is a version manager for ruby which lets you have projects which work with different versions of ruby. 
 * **RubyGems** is a package manager for installing plugins and libraries for use with ruby rails. 
-* A **RubyGem** or **Gem** is a ruby code packed for easy distribution. RubyGems.org is a public gem repository.
-* **Rails** is a gem which manages.
+* A **Gem** is a ruby code packed for easy distribution. RubyGems.org is a public gem repository.
+* **Rails** itself is a gem.
 * **Bundler** is a gem that helps your rails app to load the right ruby gems.
 * **Rake** is a gem which will make tasks.
 
 
-## Setting Things up (Mac)
-* for installation steps on ubuntu visit [here](https://gorails.com/setup/ubuntu/14.04)
-
-#### Environment 
-* install homebrew
-* install rvm
-* find out the latest versions of rails and ruby: http://ruby-lang.org, http://rubyonrails.org/
-* `$ rvm get head`
-* `$ rvm list known` you should see ruby latest version in the list
-* `$ rvm install <version of ruby you want>`
-* `$ gem install bundler`
-* `$ gem install rails` or specify version: ex. `-v 5.0.1`
-* `gem list` gives the list of installed gems in your currently active gemset, to update all gems do: `gem update --system`, to list all gemsets for currently active ruby version: `rvm gemset list`. You can switch between rubies and gemsets. search how.
-
-#### MySQL
-* ```brew install mysql``` at the end it will give you a command that make mysql launch at startup. 
-* you can always manually do: ```msyql.server start/stop/status```
-* login to mysql: ```mysql -u <user> -p```
-* set password for root: ```mysqladmin -u <user> password``` then it will ask you to enter password for this user. 
-* to make rails able to talk to mysql you need mysql2 gem: gem install mysql2
-
-#### MongoDB
-
-* https://www.youtube.com/watch?v=L0RqU2MdqXU
-* https://docs.mongodb.com/ruby-driver/master/tutorials/6.1.0/mongoid-documents/
-#### Sublime
-* (for mac users) to make sublime open with subl command in terminal enter this command: ```ln -s /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/```
-
-## Let us begin…
-#### 1. Create New Project
-Navigate to the directory you want to create the project inside it. 
-Create a new rails web application:
-
-```sh
-$ rails new <name> [-d mysql]
+## Setup
+* Install homebrew
+* Install rvm
+* Find out the latest versions of rails and ruby: http://ruby-lang.org, http://rubyonrails.org/
+```
+$ rvm get head
+$ rvm list known
+$ rvm install 2.3.6 (or the version you want)
+$ rvm list
+$ rvm --default use 2.3.6 (or the version you want)
+$ gem install bundler
+$ gem install rails (or specify a version: -v 5.0.1)
+```
+* You could have several rubies installed. For each, there could be several `gemsets` only one of which is active at a time.
+```
+$ gem list (gives list of gems in your active gemset)
+$ gem update --system (update all gems)
+$ rvm gemset list (list of gemsets for current ruby version)
 ```
 
-Create a new Rails-api:
+## Create Project
 
 ```sh
-$ rails-api new <name> [-d mysql]
+$ cd /your/desider/path
+$ rails new <name> (--api)?
 ```
-
-(rails-api is a gem, install it if you don’t already have it)
-
-#### 2. Bundler
-Bundler is used to install ruby gems for our rails application. To install a gem, add its name to the ```Gemfile```, like:
+## Install Gems
+Whenever you need to install a gem, add to `Gemfile`:
 
 ```ruby
-gem 'bcrypt'
+gem 'name'
 ```
 
-Now, navigating to the root of your app and do:
+Then do:
 
 ```sh
 $ bundle install
@@ -76,58 +57,99 @@ $ bundle install
 
 If at some point some command did not work for your project you need to put ```bundle exec``` at front of it so that the command is executed in the context of the specific bundle of gems your project has.
 
-#### 3. Database Setup
-```sql
-show databases;
+## Database Setup
+### MySQL
+```
+$ brew install mysql
+```
+At the end it will give you a command that make mysql launch at startup. 
+You can always manually do:
+```
+$ brew services stop/start mysql
+```
+Set password for user root:
+```
+$ mysqladmin -u root password
+```
+Add `-p` if root already has a password and you want to change it.
+Login to MySql, create database and a user:
+```
+$ mysql -u <user> -p
+> show databases;
+> create database my_db;
+> grant all privileges on my_db.* to 'my_user'@'localhost' identified by 'my_pass'
+```
+Install `mysql2` gem and configure `config/database.yml`
+
+### MongoDB
+```
+$ brew install mongodb
+$ mkdir -p /data/db
+$ mongo
+> show dbs
+> use admin
+> db.createUser({
+  user: "root",
+  pwd: "<password>",
+  roles: [{ role: "dbAdminAnyDatabase", db: "admin" }]
+})
+> use my_db
+> db.createUser({
+  user: "my_user",
+  pwd: "<password>",
+  roles: ["dbOwner"]
+})
+```
+On server, mongodb is usually protected by authentication.
+If you have password for root:
+```
+mongo --port 27017 -u "root" -p "<password>" --authenticationDatabase "admin"
+```
+If you don't have password of root you need to comment out `security` and `authorization` in `/etc/mongod.conf`, restart the mongodb service and do the above steps. 
+
+Install gem `mongoid` and do:
+```
+$ rails g mongoid:config
+```
+Configure `config/mongoid.yml` accordingly.
+Put the following code in `~/.irbrc`:
+```ruby
+if Object.const_defined?('Rails') && Object.const_defined?('Mongoid')
+	Mongoid.load!("#{Rails.root}/config/mongoid.yml")
+end
+```
+## Postgresql
+```
+$ brew install postgresql
+$ psql postgres
+postgres=# \du
+postgres=# \list
+postgres=# CREATE ROLE my_user WITH LOGIN PASSWORD 'password';
+postgres=# ALTER ROLE my_user CREATEDB;
+postgres=# CREATE DATABASE my_db;
+postgres=# GRANT ALL PRIVILEGES ON DATABASE my_db TO my_user;
+postgres=# \connect my_db
+postgres=# \dt
+postgres=# \q
+```
+Install gem `pg` and configure `config/database.yml`
+
+## Rails Commands
+* Run server
+```
+$ rails s (production)?
+```
+* Run console
+
+```
+$ rails c (production)?
+```
+* Help for generating stuff 
+```
+$ rails g 
 ```
 
-```sql
-create database <name>;
-```
-
-```sql
-use <name>;
-```
- 
-```sql
-queries …
-```
-
-Create new user for your application and grant appropriate privileges to it:
-
-```sql
-grant all privileges on <dbname>.* to '<new_username>'@'localhost' identified by '<password>'
-```
-
-Configure database by editing ```config/database.yml```
-
-#### 4. Start the Web-server
-Navigate to root of your app:
-
-```sh
-$ rails server 
-```
-or
-
-```sh
-rails s
-```
-
-#### 5. Generating Entities
-Navigate to root of your app:
-
-```sh
-$ rails generate
-```
-It will guide you through generating whatever type of entity you need.
-
-#### 6. Structure
-```app/controllers/concerns``` and ```app/models/concerns``` are for common code that can be shared throughout all controllers or models.
-
-```app/helpers``` contain ruby code that helps us with our views.
-
-#### 7. Working With Views
-####### Skip if you are not using rails template engine
+## Views
 * Insert ruby code in views:
 
 ```html
@@ -137,7 +159,7 @@ It will guide you through generating whatever type of entity you need.
 * Print value of an expression:
 
 ```html
- <%= code %>
+ <%= expression %>
 ```
 
 * Drop variables in strings:
@@ -146,63 +168,62 @@ It will guide you through generating whatever type of entity you need.
 "the beginning ... #{var} ... the end"
 ```
 
-* Generating links using rails helpers:
-
+* Generating links, images, forms, etc. using rails helpers:
 ```ruby
-<%= stylesheet_link_tag('application', :media => 'all') %>
-<%= javascript_include_tag('application') %>
 <%= image_tag('logo.png') %>
 <%= link_to(name, target) %>
 ```
 ```target``` could be rails hash:
 
 ```ruby
-{:controller => 'x', :action => 'y', :page => 't', …}
+{controller: 'x', action: 'y', some_param: 't', …}
 ```
 
-##### 7.1 Layouts
-You can create as much ```html.erb``` layouts as you wish in ```views/layouts```. Then put ```<%= yield %>``` inside a view to specify where you want html fragments to be rendered. In the controller class you need to specify ```layout("<name_without_html.erb>")```. The default layout is called ```application```.
+### Layouts
+You can create as much `html.erb` layouts as you wish in `views/layouts`. Then put `<%= yield %>` inside them to specify where you want html fragments to be rendered. In the controller class you need to specify `layout 'name without html.erb>'`. The default layout is called `application`.
 
-##### 7.2 Partials
-You can exclude similar html fragments from full templates and put them in a Partial file. Partials have ```"_"``` at the beginning of their name. The below code is used to yield a partial within a full template:
+### Partials
+You can exclude similar html fragments from full templates and put them in a Partial file. Partials have `_` at the beginning of their name. The below code is used to yield a partial within a full template:
 
-```html
-<%= render(:partial => “name_or_path”, :locals => {:varname => value, …}) %>
+```ruby
+<%= render partial: 'name_or_path', locals: {key: value, …}) %>
 ```
 
-##### 7.3 Helpers 
+### Helpers 
 Rails provide a very strong set of text, number, date and more helpers. Just search for whatever you want to do first, it is likely that a function already exists for that. You can also create custom helper functions to use in the views. There are also sanitize helpers. Consider using them. They are absolutely necessary.
 
 
-##### 7.4 Assets
-Put all asset files in ```app/assets``` for rails to be able to perform optimization processes for production environment. In development environment, rails directly uses asset files in ```app/assets```. In production however, it will optimize all asset files and put them in ```public/assets```. Different kind of assets are kept in different folders under ```app/assets```. In all of them there is a manifest file called ```application```. The comments at the beginning of these files are the manifest and are used as input to the optimization process. If you wish to process asset files of a particular kind in a certain order, you must explicitly define this order. To do that, vefore ```//= require_tree .``` add ```//= require <asset_name>```
+## Assets
+Put all asset files in `app/assets` for rails to be able to perform optimization processes for production environment. In development environment, rails directly uses asset files in `app/assets`. In production however, it will optimize all asset files and put them in `public/assets`. Different kind of assets are kept in different folders under `app/assets`. In all of them there is a manifest file called ```application```. The comments at the beginning of these files are the manifest and are used as input to the optimization process. If you wish to process asset files of a particular kind in a certain order, you must explicitly define this order. To do that, before `//= require_tree .` add `//= require <asset_name>`
 
-#### 8. Working with Controllers
-##### 8.1 Rendering Templates
-By default, each controller action renders a template in ```views/<controller_name>/<action_name>.html.erb```. To overwrite this default behaviour, you can put render command in controller actions:
+## Controllers
+### Rendering Templates
+By default, each controller action renders a template in `views/<controller_name>/<action_name>.html.erb`.
+
+To overwrite this default behavior, you can put render command in controller actions:
 
 ```ruby
-render(:template => 'path/to/the/view/template')
+render template: 'path/to/the/view/template'
 ```
 
-The template being rendered has access to all instance variables of the action which are those with ```@``` at the beginning.
+The template being rendered has access to all instance variables of the action which are those with `@` at the beginning.
 
-##### 8.2 Redirecting
+### Redirecting
 
 ```ruby
-redirect_to(:controller => 'x', :action => 'y')
+redirect_to controller: :x, action: :y
 ```
 or 
 
 ```ruby
-redirect_to("google.com")
+redirect_to 'google.com'
 ```
-##### 8.3 Accessing Request Parameters
+### Accessing Request Parameters
 
 Request parameters can be accessed using:
 
 ```ruby
-params[:page]
+params[:key]
 ```
 
 Rails 4 has a very strong way of passing parameters when instantiating model objects in controllers called **Mass Assignment**. You can create a safe parameter hash and pass it to model ```new``` or ```create``` methods using the ```require``` and ```permit``` methods:
@@ -211,103 +232,54 @@ Rails 4 has a very strong way of passing parameters when instantiating model obj
 params.require(:user).permit(:username, :email, :password)
 ```
 
-#### 9. Ruby Language
-
-* ```string.to_i``` to convert to integer
-* ```variable.inspect``` for debugging
-
-#### 10. Rake
-* ```$ rake -T``` lists all available rake tasks.
-* ```$ rake <taskname>``` runs the task.
-* ```$ rake <taskname> RAILS_ENV=development``` runs the task only within a particular environment.
-
-#### 11. Migrations
-```$ rails generate migration CamleCaseName``` creates a migration in ```db/migrate```.
+## Migrations
+**Ignore if you are using mongoid** 
+```
+$ rails generate migration name_for_migration
+```
 
 In each migration ruby class, put an ```up``` and a ```down``` method. These methods must be in the mirror order of each other. 
 
-In ```up``` method u can do:
+In `up` method u can do:
 
 ```ruby
 create_table :cards do |t| 
-	
-	# id column is generated by default
-	
-	t.column('<name>', :type, options) 
-	# or:
-	t.<type>('<name>', options)
-	
-	t.references(:student) 
-	# this adds a column for foreign key with name 'student_id'
-	
-	t.timestamps(:null => false)
-	# this adds created_at and updated_at columns
+  t.string :name [, options]?	
+  t.integer :student_id
+  t.timestamps
 end
+drop_table :cards
+add_column :cards, :name, :string
+remove_column :cards, :name
+add_index :cards, :student_id
+add_index :cards, [:student_id, :course_id]
 ```
 
-Available types are: 
-
-* ```binary```, ```boolean```, ```date```, ```datetime```, ```decimal```, ```float```, ```integer```, ```string```, ```text```, ```time```.
-
+Available types include: 
+```
+binary, boolean, date, datetime, decimal, float, integer, string, text, time
+```
 Available options:
-
-* ``` :limit => size```
-* ``` :default => value```
-* ``` :null => true/false```
-* ``` :precision => number``` (for decimal type only)
-* ``` :scale => number``` (for decimal type only)
-
-In down method u can do:
-
-```ruby
-drop_table(:users)
 ```
-
-To see the schema and migration status:
-
-```sh
-$ rake db:migrate:status
+limit: size
+default: value
+null: true/false
+precision: number (for decimal type only)
+scale: number (for decimal type only)
 ```
-
-To make all migrations up:
-
-```sh
-$ rake db:migrate
+Migration commands:
 ```
-
-To make all migrations down:
-
-```sh
-$ rake db:migrate VERSION=0
+$ rails db:migrate:status
+$ rails db:migrate
+$ rails db:migrate VERSION=0
+$ rails db:rollback [STEP=n]?
+$ rails db:migrate(:up/down/redo)? VERSION=number
 ```
-To go to a particular version of schema:
-
-```sh
-$ rake db:migrate VERSION=number
-```
-
-There is also:
-
-```sh
-$ rake db:migrate:up/down/redo VERSION=number
-```
-
-There are many other migration methods like ```create_table``` and ```drop_table``` out there.
-
-It is a good practice to add index on all foreign key columns and those columns which are used frequently to look up for a row of data:
-
-```ruby
-add_index(:table_name, 'column_name')
-``` 
-Cross column index:
-
-```ruby
-add_index(:table_name, [‘column1_name’, ‘column2_name’])
-```
+It is a good practice to add index on all foreign key columns and those columns which are used frequently to look up for a row of data.
 
 If you have a typo in your migration code it will cause the migration run to abort and you will get stuck in a state where you can not either go up or down. In such states just comment those executed lines of the broken method and try running the migration method again.
 
-#### 12. Working With Models
+## Models
 
 ##### 12.1 Generating models
 
