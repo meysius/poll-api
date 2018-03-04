@@ -280,62 +280,80 @@ It is a good practice to add index on all foreign key columns and those columns 
 If you have a typo in your migration code it will cause the migration run to abort and you will get stuck in a state where you can not either go up or down. In such states just comment those executed lines of the broken method and try running the migration method again.
 
 ## Models
-
-##### 12.1 Generating models
-
-```sh
-$ rails generate model CamleCaseName
-```
-
-Presistable models (entities) must inherit from ```ActiveRecord``` class.
-
-We do not need to define attributes in our models. By default, rails create methods for accessing the model's attributes based on the model's migration file.
-
-##### 12.2 One-to-one Association
+### One-to-one Association
 [Complete association reference](http://guides.rubyonrails.org/association_basics.html)
 
-On the model class of the owner side (Student):
-
-```ruby 
-has_one(:card)
-``` 
-
-On the model class of the other side (Card):
-
+#### MySQL or Postgresql
 ```ruby
-belongs_to(:student)
-``` 
-
-You also need to add foreign key to the ```belongs_to``` side in the migration file:
-
-```ruby
-...
-	t.references(:student)
-...
+class Student < ApplicationRecord 
+  has_one :card
+end
+class Card < ApplicationRecord
+  belongs_to :student
+end
 ```
 
-When you set ```student.card``` or ```card.student```, rails automatically saves the relationship in the database. Also if you set any of these to nil you will break the relationship.
-
-##### 12.3 One-to-many Association
-On the model class of the owner side (Course):
+You also need to add foreign key to the `belongs_to` side in the migration file:
 
 ```ruby
-has_many(:projects)
+create_table :cards do |t| 
+  t.integer :student_id
+end
 ```
 
-On the model class of the other side (Project):
+When you set `student.card` or `card.student`, rails automatically saves the relationship in the database. Also if you set any of these to nil you will break the relationship.
+
+#### MongoDB
+```ruby
+class Student
+  include  Mongoid::Document
+  has_one :card 
+  # OR
+  embeds_one :card
+end
+class Card
+  include  Mongoid::Document
+  belongs_to :student
+  # OR
+  embedded_in :student
+end
+```
+
+### One-to-many Association
+#### MySQL or Postgresql
+```ruby
+class Course < ApplicationRecord 
+  has_many :projects
+end
+class Project < ApplicationRecord
+  belongs_to :course
+end
+```
+
+You also need to add foreign key to the `belongs_to` side in the migration file:
 
 ```ruby
-belongs_to(:course)
+create_table :projects do |t| 
+  t.integer :course_id
+end
 ```
 
-You also need to add foreign key to the ```belongs_to``` side in the migration file:
-
+#### MongoDB
 ```ruby
-...
-	t.references(:course)
-...
+class Course
+  include  Mongoid::Document
+  has_many :projects 
+  # OR
+  embeds_many :projects
+end
+class Project
+  include  Mongoid::Document
+  belongs_to :course
+  # OR
+  embedded_in :course
+end
 ```
+
 Then you can do things like:
 
 ```ruby
@@ -350,29 +368,18 @@ course.projects.size
 ```
 If you perform any modification on ```course.projects```, rails will instantly sync the database accordingly.
 
-##### 12.4 Many-to-many Association
-
-On the model class of one side (Student):
-
+### Many-to-many Association
+#### MySQL or Postgresql
 ```ruby
-has_and_belongs_to_many(:courses)
+class Student < ApplicationRecord 
+  has_and_belongs_to_many :courses
+end
+class Course < ApplicationRecord
+  has_and_belongs_to_many :students
+end
 ```
 
-On the model class of the other side (Course):
-
-```ruby
-has_and_belongs_to_many(:students)
-```
-
-```has_and_belongs_to_many``` can also take additional parameters to configure the relationship:
-
-```ruby
-:join_table => 'table_name'
-:class_name => 'ActualClassNameInCaseYouChangeTheRelationshipKey'
-:foreign_key => 'column_name_in_table_for_actual_class'
-```
-
-We have to generate a migration to create join table for this relationship. Rails naming convention for the name of join table is:
+You have to generate a migration to create join table for this relationship. Rails naming convention for the name of join table is:
 
 ```
 first_table + _ + second_table
@@ -383,191 +390,185 @@ The migration file should look like this:
 
 ```ruby
 def up
-	create_table :courses_students, :id => false do |t|
-		t.references(:student)
-		t.references(:course)
-	end 
-	add_index(:courses_students, ['student_id', 'course_id'])
+  create_table :courses_students, :id => false do |t|
+    t.integer :student_id
+    t.integer :course_id
+  end 
+  add_index :courses_students, [:student_id, :course_id]
 end
 
 def down
-	drop_table(:courses_students)
+  drop_table :courses_students
 end
 ```
+
+#### MongoDB
+```ruby
+class Student
+  include  Mongoid::Document
+  has_and_belongs_to_many :courses
+end
+class Course
+  include  Mongoid::Document
+  has_and_belongs_to_many :students
+end
+```
+
+If you change the name of the relationship from its default name, you would have to configure the relationship in order for it to work as it should:
+```ruby
+join_table: :table_name
+class_name: 'ActualClassNameInCaseYouChangeTheRelationshipKey'
+foreign_key: :name_of_column_used_as_foreign_key
+```
+
 Again, If you perform any modification on objects in either side of such relationship, rails will instantly sync the database accordingly.
 
-##### 12.5 Inheritance
+### Inheritance
 Two main types of class inheritance:
 - Single Table Inheritance
 - Class Table Inheritance (https://github.com/mvdamme/dbview_cti)
 
 
-##### 12.6 Creating and saving model objects
+### Create, Update, and Delete
 
 ```ruby
-m = ModelName.new
-m = ModelName.new(hash to initialize attributes)
-
-m.new_record? 
- # has it been saved in the database?
-
-m.save
-
-m = ModelName.create(hash to initialize attributes) 
- # this will call save itself after instantiation
+u = User.new
+u.assign_attributes(hash) # Update without saving
+u.update_attributes(hash) # Update and save
+u.update_attributes!(hash) # Update and raise errors
+u = User.new(hash) # initialize object
+u.new_record? # has it been saved in the database?
+u.save # save and return true false
+u.save! # save and raise error
+u = User.create(hash) # new and save 
+u = User.create!(hash) # new and save and raise error
+u.destroy
 ```
 
-##### 12.7 Finding model objects
+### Fetching Objects
 
 ```ruby
-m = ModelName.find(id)
- # returns error if not found
-
-m = ModelName.find_by_<column_name>(value)
- # returns nil if not found or the first record matching the search
- 
-ModelName.all
-ModelName.first
-ModelName.last
-ModelName.where(hash)
-ModelName.where([“where clause with ?s in the middle”, val1, val2, …])
- # where, order, offset, and limit are query methods available to ActiveRecord class.
+u = User.find_by(hash)
+u = User.find_or_create_by(hash) # try to find, create if not found
+User.all
+User.first
+User.last
+User.where(hash)
+User.where([“column_1 = ? and column_2 > ?”, a, b])
 ```
+`where`, `order`, `offset`, and `limit` are query methods available to ActiveRecord class.
 
 **Named Scopes** are to make use of the above four methods but in a nicer way. For that, just add scopes to a Model:
 
 ```ruby
-scope(:<name>, -> (params) {where(…)})
+scope :name, -> (params) { where(hash) }
 ```
 
 and then we use it like:
 
 ```ruby
-ModelName.<scope_name>
+Model.scope_name
 ```
-
-##### 12.8 Updating model objects
-
-```ruby
-m = ModelName.find(id)
- # you can change and then save
- 
-m.update_attributes(hash)
- # this will change and save all at once
-```
-
-##### 12.9 Removing model objects
-
-```ruby
-m.destroy
-```
-#### 13. Rails Console
-Rails gives a very strong command line interface to work with models directly. To do that, navigate to the root of your application and do:
-
-```sh
-$ rails console [environment_name (development is default)]
-```
-
-#### 14. Validation
-Rails has some methods that adds validation to the models. The signature of almost all of these methods is:
-
-```ruby
-function_name(:attribute_to_check, {hash of options})
-```
+### Validation
 List of validation functions:
 
 ```ruby
 validates_presence_of 
-	# options -> :message
+# options -> :message
 
 validates_length_of
-	# options -> :is, :minimum, :maximum, :within, :in, :wrong_length, :too_short, :too_long
+# options -> :is, :minimum, :maximum, :within, :in, :wrong_length, :too_short, :too_long
 
 validates_numericality_of 
-	# options -> :equal_to, :greater_than, :less_than, :greater_than_or_equal_to, :less_than_or_equal_to, :odd, :even, :only_integer, :message
+# options -> :equal_to, :greater_than, :less_than, :greater_than_or_equal_to, :less_than_or_equal_to, :odd, :even, :only_integer, :message
 
 validates_inclusion_of
-	# options -> :in, :message
+# options -> :in, :message
 
 validates_exclusion_of
-	# options -> :in, :message
+# options -> :in, :message
 
 validates_format_of
-	# options -> :with, :message
+# options -> :with, :message
 
 validates_uniqueness_of
-	# options -> :case_sensitive, :scope, :message
+# options -> :case_sensitive, :scope, :message
 
 validates_acceptance_of
-	# options -> :accept, :message
+# options -> :accept, :message
 
 validates_confirmation_of
-	# options -> :message
-
-validates_associated(:association_name_to_check)
-
+# options -> :message
 ```
 Global Options we can use on almost all of the above:
 
 ```ruby
 :allow_blank
 :allow_nil
-:on => :create/:update/:save(default)
-:if => :method_name 
-	# a boolean returner function, indicating whether or not the object should be validated
+on: :create/:update/:save(default)
+if: :method_name 
+# a boolean returner function, indicating whether or not the object should be validated
 ```
 
 There is another way to write validations called **Sexy Validation**: 
 
 ```ruby
-validates(:attribute_to_check,
-	:presence => {}, # or a boolean
-	:numericality => {}, # or a boolean
-	:length => {},
-	:format => {},
-	:inclusion => {},
-	:exclusion => {},
- 	:acceptance => {},
- 	:uniqueness => {},
- 	:confirmation => {})
+validates 
+  :attribute_to_check,
+  :presence => {}, # or a boolean
+  :numericality => {}, # or a boolean
+  :length => {},
+  :format => {},
+  :inclusion => {},
+  :exclusion => {},
+  :acceptance => {},
+  :uniqueness => {},
+  :confirmation => {}
 ```
 
-Call ```.valid?``` on objects to check their validity. Call ```.errors``` on objects to see its errors. You can also add your own custom validation methods to the model:
+Call `.valid?` on objects to check their validity. Call `.errors` on objects to see its errors. 
+
+You can also add your own custom validation methods to the model:
 
 ```ruby
-def :name_for_this_validation_method 
+def :name_of_validation 
 	# check validation criteria
 	# finally do:
 	errors.add(:attribute or :base, "msg") 
 end
 ```
 
-And use them on the model like:
+And declare this validation on the Model:
 
 ```ruby
 validate :method_name 
-	# you can also add :on or :if options here
+# you can also add :on or :if options here
 ```
 
-#### 15. Cookies and Sessions
+## Cookies and Sessions
 To set a cookies and session variables:
 
 ```ruby
-cookies[:username] = "john"
-session[:username] => "john"
-cookies[:username] = {:value => "", :expires => 1.week.from_now}
+cookies[:key] = val
+session[:key] = val
+cookies[:username] = {
+  value: val,
+  expires: 1.week.from_now
+}
 ```
 
-Session data can be stored in file, database, or we can use cookies to store them. Since we are sending information to the user's local machine we need a mechanism to check whether or not they are changed by anyone other than us. Rails use the secret key stored in ```config/initializers/secret_token.rb``` to validate the integrity of signed cookies. ```$ rake secret``` will produce new key for you which you can replace the old one with.
+Session data can be stored in file, database, or we can use cookies to store them. Since we are sending information to the user's local machine we need a mechanism to check whether or not they are changed by anyone other than us. Rails use the secret key stored in `config/initializers/secret_token.rb` to validate the integrity of signed cookies. 
 
-The configuration to make rails use cookies for storing sessions is stored in ```config/initializers/session_store.rb```
+`$ rake secret` will produce new key for you which you can replace the old one with.
 
-#### 16. RESTful Routes
+The configuration to make rails use cookies for storing sessions is stored in `config/initializers/session_store.rb`
+
+## RESTful Routes
 
 To see all routes of your app, do:
 
 ```ruby
-$ rake routes 
+$ rails routes 
 ```
 
 Below is the standard list of RESTful routes:
@@ -583,118 +584,60 @@ Below is the standard list of RESTful routes:
 | /subjects/:id/delete | GET         | delete            | Show delete form for item with :id |
 | /subjects/:id        | DELETE      | destroy           | Delete item with :id               |
 ```
-You can find routing configuration file in: ```config/routes.rb```
+You can find routing configuration file in: `config/routes.rb`
 
-#### 17. Building a RESTful Rails API
-First, you need to set permission for ajax calls from other domains. You need to get this [gem](http://github.com/cyu/rack-cors) installed: 
+## Building a RESTful Rails API
+First, install this [gem](http://github.com/cyu/rack-cors) following instruction in its repo.
 
-```sh
-$ gem install rack-cors
-```
-Add this line to gemfile:
-
-```ruby
-gem 'rack-cors', :require => 'rack/cors'
-```
-Navigate to the root of your project and do:
-
-```sh
-$ bundle install
-```
-
-Add this code to ```config/application.rb```:
-
-```ruby
-config.middleware.insert_before 0, "Rack::Cors" do
-	allow do
-		origins '*'
-		resource '*', :headers => :any, :methods => [:get, :post, :options] 
-	end 
-end
-```
-
-Then you need to add routes for your RESTful api:
-Read [this blog](http://blog.ragnarson.com/2013/10/01/how-to-integrate-angularjs-with-rails-4.html) 
-
+Then you need to add routes for your RESTful API:
 ```ruby
 namespace :api, :defaults => {:format => :json} do
-	resources(:users, :only => [:create])
+  resources :users, :only => [:create]
 end
 ```
 
 Then in controller actions you render json responses:
 
 ```ruby
-render(:json => json_object, :status => 200)
-# or
-render(:nothing => true, :status => 200)
+render json: obj, status: 200
+# OR
+render nothing: true, status: 200
 ```
-To customize the serialization of your models into json, include this in your gemfile:
-
-```ruby
-gem 'active_model_serializers'
-```
-Do:
-
-```sh
-$ bundle install
-```
-
-Now put the following code in ```config/initializers/active_model_serializers.rb```:
-
-```ruby
-ActiveSupport.on_load(:active_model_serializers) do
-	# This prevents generating root nodes in json responses
-	ActiveModel::Serializer.root = false 
-	ActiveModel::ArraySerializer.root = false 
-end
-```
-
-If you are working on a Rails-api, serializers are not loaded by default. Therefore, you need to put the following line in your application_controller:
-
-```ruby
-include ActionController::Serialization
-```
-
-Now generate and customize serializers for those models you need to serialize:
-
-```sh
-$ rails generate serializer User
-```
-
-Search for more details on the Internet for the things you can customize with serializers.
 
 #### 18. Authentication
-Install bcrypt gem. Add a column named ```password_digest``` on your users table. Then simply add ```has_secure_password``` in the User model. What it does, is it adds a virtual attribute named ```password``` to that model. It also adds validation to check if ```password``` and ```password_confirmation``` are present and then whether or not they match. So what you need to do is setting plain password on a new user object and call save. It will encrypt this password and save it in ```password_digest```.
-
-Then to check whether or not a user can be authenticated with a given password, find the user and call ```.authenticate("given password")```. This will either return false or the user object itself.
-
-If the authentication is successful, you need to mark the user as authenticated. You can do this by putting the logged in status in user's session.
-
-If your application is only a rails api, you need to generate a Json Web Token instead of cookie session and send it back to user. To create this token, follow the instructions [here](https://github.com/jwt/ruby-jwt).
+* Install `bcrypt` gem. 
+* Add a column named `password_digest` on your users table. 
+* Then simply add `has_secure_password` in the User model. What it does, is it adds a virtual attribute named `password` to that model. It also adds validation to check if `password` and `password_confirmation` are present and then whether or not they match. 
+* Set plain password on a new user object and call save. It will encrypt this password and save it in `password_digest`.
+* Check if user's given password is correct:
+```ruby
+u = User.last
+u.authenticate('give password') # returns false or user
+```
+* Put the username of the logged in user in session
+* If your application is only a rails api, you need to generate a Json Web Token instead of cookie session and send it back to user. To create this token, follow the instructions [here](https://github.com/jwt/ruby-jwt).
 
 To check if user has logged in when they request for an action, first, add this method to ApplicationController:
-
 ```ruby
 private
 
 def confirm_logged_in 
-	if <token is valid>
-		return true
-	else 
-		render(:nothing => true, :status => 401)
-		return false
-	end
+  if <token is valid>
+    return true
+  else 
+    render nothing: true, status: 401
+    return false
+  end
 end
 ```
 
 Now you have to add this line to all controllers to check if the user has logged in before an actions is actually run:
 
 ```ruby
-before_action(:confirm_logged_in, {:except => [:action1, :action2])
-# or
-before_action(:confirm_logged_in, {:only => [:action3, :action4]})
-# or the combination of both :only and :except
+before_action :confirm_logged_in, except: [:action_1]
+# OR
+before_action :confirm_logged_in, only: [:action_3]
+# OR a combination of both :only and :except
 ```
 
 
