@@ -604,7 +604,8 @@ render json: obj, status: 200
 render nothing: true, status: 200
 ```
 
-#### 18. Authentication
+## Authentication
+### MySQL and Postgresql
 * Install `bcrypt` gem. 
 * Add a column named `password_digest` on your users table. 
 * Then simply add `has_secure_password` in the User model. What it does, is it adds a virtual attribute named `password` to that model. It also adds validation to check if `password` and `password_confirmation` are present and then whether or not they match. 
@@ -614,8 +615,38 @@ render nothing: true, status: 200
 u = User.last
 u.authenticate('give password') # returns false or user
 ```
-* Put the username of the logged in user in session
-* If your application is only a rails api, you need to generate a Json Web Token instead of cookie session and send it back to user. To create this token, follow the instructions [here](https://github.com/jwt/ruby-jwt).
+### Mongoid
+* Install `bcrypt` gem 
+* Add the following code to your User model.
+```ruby
+class User
+  include Mongoid::Document
+  include BCrypt
+  field :password_hash, type: String
+
+  def password
+    if !password_hash.nil?
+      @password ||= Password.new(password_hash)
+    end
+  end
+
+  def password=(new_password)
+    if !new_password.blank?
+      @password = Password.create(new_password)
+    end
+    self.password_hash = @password
+  end
+end
+```
+* Check if user's give password is correct:
+```ruby
+u = User.last
+u.password == 'given password'
+```
+### After Password is Confirmed
+Put the username of the logged in user in session
+
+If your application is only a rails api, you need to generate a Json Web Token instead of cookie session and send it back to user. To create this token, follow the instructions [here](https://github.com/jwt/ruby-jwt).
 
 To check if user has logged in when they request for an action, first, add this method to ApplicationController:
 ```ruby
@@ -639,5 +670,3 @@ before_action :confirm_logged_in, except: [:action_1]
 before_action :confirm_logged_in, only: [:action_3]
 # OR a combination of both :only and :except
 ```
-
-
