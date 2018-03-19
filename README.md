@@ -107,7 +107,24 @@ mongo --port 27017 -u "root" -p "<password>" --authenticationDatabase "admin"
 ```
 If you don't have password of root you need to comment out `security` and `authorization` in `/etc/mongod.conf`, restart the mongodb service and do the above steps. 
 
-Install gem `mongoid` and do:
+Install gem `mongoid`.
+
+Delete any lines starting with `config.active_record` from `config/environments/development` and `config/environments/production`.
+
+Open config/application.rb and replace `require 'rails/all'` with:
+```
+require "rails"
+require "active_model/railtie"
+require "active_job/railtie"
+require "action_controller/railtie"
+require "action_mailer/railtie"
+require "action_view/railtie"
+require "action_cable/engine"
+require "sprockets/railtie"
+require "rails/test_unit/railtie"
+```
+
+Then do:
 ```
 $ rails g mongoid:config
 ```
