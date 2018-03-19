@@ -111,7 +111,7 @@ Install gem `mongoid`.
 
 Delete any lines starting with `config.active_record` from `config/environments/development` and `config/environments/production`.
 
-Open config/application.rb and replace `require 'rails/all'` with:
+Open `config/application.rb` and replace `require 'rails/all'` with:
 ```
 require "rails"
 require "active_model/railtie"
