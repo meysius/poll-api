@@ -107,11 +107,7 @@ mongo --port 27017 -u "root" -p "<password>" --authenticationDatabase "admin"
 ```
 If you don't have password of root you need to comment out `security` and `authorization` in `/etc/mongod.conf`, restart the mongodb service and do the above steps. 
 
-Install gem `mongoid`.
-
-Delete any lines starting with `config.active_record` from `config/environments/development` and `config/environments/production`.
-
-Open `config/application.rb` and replace `require 'rails/all'` with:
+If you are making a new rails app add `--skip-active-record`. If you already have an app, delete any lines starting with `config.active_record` from `config/environments/development` and `config/environments/production` then open `config/application.rb` and replace `require 'rails/all'` with:
 ```
 require "rails"
 require "active_model/railtie"
@@ -123,7 +119,7 @@ require "action_cable/engine"
 require "sprockets/railtie"
 require "rails/test_unit/railtie"
 ```
-
+Install gem `mongoid`
 Then do:
 ```
 $ rails g mongoid:config
