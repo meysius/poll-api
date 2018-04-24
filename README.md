@@ -902,3 +902,9 @@ $ sudo service nginx restart
 ```
 You should now be able to point your web browser to your server IP and see your Rails app in action!
 - If you make change to `config/nginx.conf`, commit, issue a deploy command: `$ cap production deploy` and restart nginx on the server: `sudo service nginx restart`
+
+## Domain parking
+read:
+[How to point your domain to DigitalOcean servers](https://www.digitalocean.com/community/tutorials/how-to-point-to-digitalocean-nameservers-from-common-domain-registrars)
+[How to point your DigitalOcean server to your domain](https://www.digitalocean.com/community/tutorials/an-introduction-to-digitalocean-dns)
+
