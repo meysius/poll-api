@@ -853,6 +853,7 @@ end
 # kill -s SIGUSR2 pid   # Restart puma
 # kill -s SIGTERM pid   # Stop puma
 ```
+- Edit your firewall to let incoming connection to port 22 (80 and 443) 
 - Create file `config/nginx.conf` and paste the following and edit `appname`
 ```
 upstream puma {
