@@ -84,7 +84,10 @@ Install `mysql2` gem and configure `config/database.yml`
 ### MongoDB
 ```
 $ brew install mongodb
-$ mkdir -p /data/db
+```
+If mongodb is going to be accessed from outside of server, you need to create a user that has appropriate access on that specific db name
+Set password for user root:
+```
 $ mongo
 > show dbs
 > use admin
@@ -93,6 +96,9 @@ $ mongo
   pwd: "<password>",
   roles: [{ role: "dbAdminAnyDatabase", db: "admin" }]
 })
+```
+Create a user for a specific db name and make that user owner of the db
+```
 > use my_db
 > db.createUser({
   user: "my_user",
@@ -903,7 +909,10 @@ $ sudo service nginx restart
 ```
 You should now be able to point your web browser to your server IP and see your Rails app in action!
 - If you make change to `config/nginx.conf`, commit, issue a deploy command: `$ cap production deploy` and restart nginx on the server: `sudo service nginx restart`
-
+- You might need to add environment variables in production server to read db password or secret_key_base. To do so, add variables like below to `/etc/environment` and reboot the server:
+```
+VAR_NAME="value"
+```
 ## Domain parking
 read:
 - [How to point your domain to DigitalOcean servers](https://www.digitalocean.com/community/tutorials/how-to-point-to-digitalocean-nameservers-from-common-domain-registrars)
