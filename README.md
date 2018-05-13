@@ -911,3 +911,5 @@ read:
 
 - [How to point your DigitalOcean server to your domain](https://www.digitalocean.com/community/tutorials/an-introduction-to-digitalocean-dns)
 
+## Setting up HTTPS
+Read [steps for setting up lets encrypt](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04)
