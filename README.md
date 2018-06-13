@@ -27,7 +27,7 @@ $ rvm install 2.3.6 (or the version you want)
 $ rvm list
 $ rvm --default use 2.3.6 (or the version you want)
 $ gem install bundler
-$ gem install rails (or specify a version: -v 5.0.1)
+$ gem install rails --no-rdoc --no-ri (for latest or specify a version: -v 5.0.1)
 ```
 * You could have several rubies installed. For each, there could be several `gemsets` only one of which is active at a time.
 ```
