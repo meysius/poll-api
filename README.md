@@ -138,9 +138,15 @@ if Object.const_defined?('Rails') && Object.const_defined?('Mongoid')
 end
 ```
 ## Postgresql
-
 ```
 $ brew install postgresql
+```
+Create rails app with `--database=postgresql` or install gem `pg` and configure `config/database.yml`
+```
+$ rails db:create
+```
+For setting up role on production:
+```
 $ psql postgres
 postgres=# \du
 postgres=# \list
@@ -152,8 +158,6 @@ postgres=# \connect my_db
 postgres=# \dt
 postgres=# \q
 ```
-Create rails app with `--database=postgresql` or install gem `pg` and configure `config/database.yml`
-
 ## Rails Commands
 * Run server
 ```
