@@ -147,13 +147,23 @@ $ rails db:create
 ```
 For setting up role on production:
 ```
+[Syntax]
+$ psql db_namee -U user 
+
+[Main DB with no user] 
 $ psql postgres
+
 postgres=# \du
 postgres=# \list
+
 postgres=# CREATE ROLE my_user WITH LOGIN PASSWORD 'password';
 postgres=# ALTER ROLE my_user CREATEDB;
 postgres=# CREATE DATABASE my_db;
 postgres=# GRANT ALL PRIVILEGES ON DATABASE my_db TO my_user;
+or
+[Create super user no password]
+postgres=# CREATE ROLE postgres WITH SUPERUSER CREATEDB CREATEROLE LOGIN;
+
 postgres=# \connect my_db
 postgres=# \dt
 postgres=# \q
