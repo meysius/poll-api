@@ -168,6 +168,11 @@ postgres=# \connect my_db
 postgres=# \dt
 postgres=# \q
 ```
+
+Importing dumps:
+```
+$ psql db_name < dump.sql
+```
 ## Rails Commands
 * Run server
 ```
