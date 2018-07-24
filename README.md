@@ -918,6 +918,9 @@ $ sudo ln -nfs "/home/deploy/apps/#{appname}/current/config/nginx.conf" "/etc/ng
 - Restart Nginx
 ```
 $ sudo service nginx restart
+OR 
+$ sudo systemctl restart nginx.service
+$ sudo journalctl -u nginx.service -f (logging live a service with name)
 ```
 You should now be able to point your web browser to your server IP and see your Rails app in action!
 - If you make change to `config/nginx.conf`, commit, issue a deploy command: `$ cap production deploy` and restart nginx on the server: `sudo service nginx restart`
