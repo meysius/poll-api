@@ -938,9 +938,9 @@ read:
 Read [steps for setting up lets encrypt](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04)
 
 ## Rspec, Capybara, FactoryBot
-[RSpec 1](https://code.tutsplus.com/articles/rspec-testing-for-beginners-part-1--cms-26716)
-[RSpec 2](https://code.tutsplus.com/articles/rspec-testing-for-beginners-02--cms-26720)
-[RSpec 3](https://code.tutsplus.com/articles/rspec-testing-for-beginners-03--cms-26728)
-[Best Practices](http://www.betterspecs.org/)
-[Capybara Docs](https://github.com/teamcapybara/capybara) [Capybara Cheatsheet](https://devhints.io/capybara) 
-[FactoryBot](https://github.com/thoughtbot/factory_bot/blob/master/GETTING_STARTED.md)
+- [RSpec 1](https://code.tutsplus.com/articles/rspec-testing-for-beginners-part-1--cms-26716)
+- [RSpec 2](https://code.tutsplus.com/articles/rspec-testing-for-beginners-02--cms-26720)
+- [RSpec 3](https://code.tutsplus.com/articles/rspec-testing-for-beginners-03--cms-26728)
+- [Best Practices](http://www.betterspecs.org/)
+- [Capybara Docs](https://github.com/teamcapybara/capybara) [Capybara Cheatsheet](https://devhints.io/capybara) 
+- [FactoryBot](https://github.com/thoughtbot/factory_bot/blob/master/GETTING_STARTED.md)
