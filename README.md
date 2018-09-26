@@ -148,6 +148,7 @@ $ rails db:create
 
 For installing postgres on ubuntu in production:
 ```
+$ sudo apt-get install libpq-dev
 $ sudo apt-get install postgresql postgresql-contrib
 ```
 Postgresql super user `postgres` is used for administation and database `postgres` is used for users and database data. 
