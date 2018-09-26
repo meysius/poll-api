@@ -156,7 +156,7 @@ To reset the password of `postgres` role or user:
 ```
 $ sudo vim /etc/postgresql/<VERSION>/main/pg_hba.conf
 ```
-Change `local all postgres peer` to `local all postgres trust` then do a `sudo service postgresql restart`
+Change `peer` to `trust` for `local all postgres` and `local all all` then do a `sudo service postgresql restart`
 Now connect to psql client with `postgres` user:
 ```
 [Command shell with postgres user] 
