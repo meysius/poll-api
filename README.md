@@ -605,6 +605,24 @@ validate :method_name
 # you can also add :on or :if options here
 ```
 
+### Callbacks
+There are:
+```
+before_create
+before_save
+before_validation
+before_commit
+before_update
+
+after_create
+after_save
+after_validation
+after_commit
+after_update
+```
+If you want to see if any attribute has changed in `after` callbacks, use `self.saved_change_to_attribute?(:title)` and `attribute_before_last_save(attr_name)`
+[Read here](https://api.rubyonrails.org/classes/ActiveRecord/AttributeMethods/Dirty.html)
+
 ## Cookies and Sessions
 To set a cookies and session variables:
 
