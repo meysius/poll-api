@@ -18,7 +18,7 @@ This repository contains a **complete RESTful Rails-api** along with a clean doc
 
 ## Setup
 * Install homebrew
-* Install rvm
+* Install rvm: https://rvm.io/rvm/install#1-download-and-run-the-rvm-installation-script
 * Find out the latest versions of rails and ruby: http://ruby-lang.org, http://rubyonrails.org/
 ```
 $ rvm get head
