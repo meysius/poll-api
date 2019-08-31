@@ -35,7 +35,9 @@ $ gem list (gives list of gems in your active gemset)
 $ gem update --system (update all gems)
 $ rvm gemset list (list of gemsets for current ruby version)
 ```
-
+* Install nvm using homebrew and then follow instructions outputed to activate it
+* `nvm ls-remote` find the latest LTS version in the list and do `nvm install 10.16.3`
+* To switch node version: `nvm use 10.15.0` and to make a version default do `nvm alias default 10.15.0`
 ## Create Project
 
 ```sh
